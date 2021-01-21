@@ -9,8 +9,10 @@
 </head>
 <body>
   <div class="container">
+
     <div class="settings">
-      <div class="settings__volume">
+      <div class="settings__volume settings__option--display">
+        <h2 class="settings-header">Set up a volume</h2>
         <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="volume" class="settings__volume-input">
 
         <datalist id="volumes">
@@ -19,7 +21,8 @@
         </datalist>
       </div>
 
-      <div class="settings__wave">
+      <div class="settings__wave settings__option--display">
+        <h2 class="settings-header">Choose a wave</h2>
         <select name="wave" id="wave" class="setings__wave-select">
           <option value="sine" selected>Sine</option>
           <option value="square">Square</option>
@@ -28,8 +31,11 @@
       </div>
     </div>
 
-    <div class="keyboard">
+    <div class="keyboard-theme">
+      <span class="keyboard-theme_name">JavaScript Piano</span>
+      <div class="keyboard-keys">
 
+      </div>
     </div>
   </div>
 
