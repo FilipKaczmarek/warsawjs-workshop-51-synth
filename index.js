@@ -25,7 +25,20 @@ function createKeyboard() {
 
 // Utworzenie pojedynczego klawisza reprezentujacego kolejny dzwiek
 function createKey(key) {
-  // ...
+  let keyElement = document.createElement('div');
+  let labelElement = document.createElement('div');
+
+  const note = key[0]
+  const frequency = key[1]
+
+  keyElement.className = 'keyboard-key'
+  keyElement.dataset['note'] = note
+  keyElement.dataset['frequency'] = frequency
+
+  labelElement.innerHTML = note
+  keyElement.appendChild(labelElement)
+
+  return keyElement
 }
 
 // Modyfikacja wartosci dla GainNode - callback dla listenera zmiany glosnosci
