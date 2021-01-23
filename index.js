@@ -5,7 +5,7 @@ const audioContext = new window.AudioContext
 let oscillators = []
 let masterGainNode = null;
 
-const keyboard = document.querySelector('.keyboard')
+const keyboard = document.querySelector('.keyboard-keys')
 const wave = document.querySelector('select[name="wave"]')
 const volume = document.querySelector('input[name="volume"]')
 
@@ -14,13 +14,21 @@ const volume = document.querySelector('input[name="volume"]')
 // * przypisanie glosnosci do interface GainNode,
 // * wywolanie funkcji tworzacej klawisze
 function synthSetup() {
-  // ...
+  volume.addEventListener('change', changeVolume, false)
+
+  masterGainNode = audioContext.createGain()
+  masterGainNode.connect(audioContext.destination)
+  masterGainNode.gain.value = volume.value
+
+  createKeyboard()
 }
 
 // Przejscie po ustawionej na sztywno tablicy czestotliwosci dzwiekow
 // oraz utworzenie dla kazdej klawisza
 function createKeyboard() {
-  // ...
+  frequency.forEach((key) => {
+    keyboard.appendChild(createKey(key));
+  })
 }
 
 // Utworzenie pojedynczego klawisza reprezentujacego kolejny dzwiek
@@ -32,38 +40,65 @@ function createKey(key) {
   const frequency = key[1]
 
   keyElement.className = 'keyboard-key'
+  labelElement.className = 'keyboard-label'
   keyElement.dataset['note'] = note
   keyElement.dataset['frequency'] = frequency
 
   labelElement.innerHTML = note
   keyElement.appendChild(labelElement)
 
+  keyElement.addEventListener('mousedown', keyPressed, false);
+  keyElement.addEventListener('mouseup', keyReleased, false);
+  keyElement.addEventListener('mouseover', keyPressed, false);
+  keyElement.addEventListener('mouseleave', keyReleased, false);
+
   return keyElement
 }
 
 // Modyfikacja wartosci dla GainNode - callback dla listenera zmiany glosnosci
 function changeVolume(e) {
-  // ...
+  masterGainNode.gain.value = volume.value
 }
 
 // Ustawianie odpowiedniej czestotliwosci dla oscylatora,
 // typu fali, a nastepnie odtworzenie dzwieku
 function playTone(frequency) {
-  // ...
+  const oscillator = audioContext.createOscillator()
+
+  oscillator.connect(masterGainNode)
+  oscillator.type = wave.options[wave.selectedIndex].value
+  oscillator.frequency.value = frequency
+  oscillator.start()
+
+  return oscillator
 }
 
 // Callback na nacisniecie klawisza
 function keyPressed(e) {
-  // ...
+  if (e.buttons & 1) {
+    const dataset = e.target.dataset;
+
+    if (!dataset['pressed']) {
+      oscillators[dataset['note']] = playTone(dataset['frequency']);
+      dataset['pressed'] = true;
+    }
+  }
 }
 
 // Callback na zwolnienie klawisza,
 function keyReleased(e) {
-  // ...
+  const dataset = e.target.dataset
+
+  if(dataset && dataset['pressed']) {
+    oscillators[dataset['note']].stop()
+
+    delete oscillators[dataset['note']];
+    delete dataset['pressed']
+  }
 }
 
-documentReady(function() {
-  // ...
+documentReady(function () {
+  synthSetup();
 })
 
 function documentReady(fn) {
